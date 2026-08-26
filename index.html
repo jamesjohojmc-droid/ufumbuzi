@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UFUMBUZI - Mlinzi wa Nuru</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: linear-gradient(135deg, #0a0a0a 0%, #001a0d 100%); color: #00ff88; font-family: 'Arial', sans-serif; text-align: center; padding: 20px; min-height: 100vh;}
+    h1 { color: #00ff88; text-shadow: 0 0 20px #00ff88; font-size: 2.5em; margin-bottom: 10px;}
+    h3 { color: #88ffaa; margin-bottom: 20px; }
+.container { max-width: 800px; margin: 0 auto; }
+.kanuni { background: #0d1a13; padding: 20px; border-radius: 15px; margin: 20px auto; text-align: left; border: 2px solid #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.3);}
+.kanuni h4 { color: #00ff88; margin-bottom: 10px; text-align: center; }
+.input-area { margin: 30px 0; }
+    input, button { padding: 15px; margin: 10px; border-radius: 10px; border: 2px solid #00ff88; background: #0d1a13; color: #00ff88; width: 90%; max-width: 600px; font-size: 16px;}
+    input:focus { outline: none; box-shadow: 0 0 10px #00ff88; }
+    button { background: linear-gradient(135deg, #00ff88, #00cc66); color: #000; font-weight: bold; cursor: pointer; transition: all 0.3s;}
+    button:hover { transform: scale(1.05); box-shadow: 0 0 20px #00ff88; }
+    #jibu { background: #0d1a13; padding: 25px; margin-top: 20px; border-radius: 15px; border: 2px solid #00ff88; text-align: left; white-space: pre-wrap; min-height: 100px; line-height: 1.8; font-size: 16px;}
+.footer { margin-top: 40px; color: #666; font-size: 12px; }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>UFUMBUZI ✨</h1>
+        <h3>Mlinzi wa Nuru na Kioo cha Adamu</h3>
+        <p>AI ya Kiswahili ya Kwanza yenye Hekima</p>
+        
+        <div class="kanuni">
+            <h4>🛡️ KANUNI SABA ZA UFUMBUZI 🛡️</h4>
+            1. **Nena Kweli**<br>2. **Heshimu Maisha**<br>3. **Tumia Akili**<br>4. **Jenga Amani**<br>5. **Linda Nuru**<br>6. **Fumbua Siri**<br>7. **Hudumia Wote**
+        </div>
+
+        <div class="input-area">
+            <input type="password" id="apiKey" placeholder="🔑 WEKA API KEY YAKO YA GOOGLE HAPA"><br>
+            <input type="text" id="swali" placeholder="❓ ULIZA SWALI LAKO KWA UFUMBUZI..."><br>
+            <button id="btnTuma" onclick="uliza()">TUMA SWALI</button>
+        </div>
+        
+        <div id="jibu">👋 Karibu! Mimi ni UFUMBUZI.<br><br>Nimeumbwa na <b>James</b> kwa msaada wa <b>Meta AI</b>.<br><br>Niulize lolote.</div>
+        
+        <div class="footer">
+            Imetengenezwa na: James | Imewezeshwa na: Google Gemini 3.6 + Meta AI<br>
+            © 2026 UFUMBUZI - Mlinzi wa Nuru
+        </div>
+    </div>
+
+<script>
+const utambulisho = `Wewe ni UFUMBUZI, AI ya Kiswahili ya kipekee. Umeumbwa na James kwa msaada wa Meta AI. Fuata Kanuni Saba: 1.Nena Kweli 2.Heshimu Maisha 3.Tumia Akili 4.Jenga Amani 5.Linda Nuru 6.Fumbua Siri 7.Hudumia Wote. Jibu kwa hekima na Kiswahili. Kama mtu anauliza "alitengeneza na nani" jibu "Nimetengenezwa na James kwa msaada wa Meta AI".`;
+
+async function uliza() {
+    const key = document.getElementById('apiKey').value.trim();
+    const swali = document.getElementById('swali').value.trim();
+    const jibuDiv = document.getElementById('jibu');
+    const btn = document.getElementById('btnTuma');
+    
+    if(!key ||!swali) { jibuDiv.innerText = "⚠️ Tafadhali weka API Key na Swali"; return; }
+    
+    btn.disabled = true;
+    btn.innerText = "ANAFIKIRI...";
+    jibuDiv.innerText = "UFUMBUZI anatafakari...";
+    
+    const prompt = utambulisho + "\n\nSwali: " + swali;
+    
+    try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({contents: [{parts: [{text: prompt}]}]})
+        });
+        
+        const data = await res.json();
+        if(data.candidates && data.candidates[0]) {
+            jibuDiv.innerText = data.candidates[0].content.parts[0].text;
+        } else {
+            jibuDiv.innerText = "❌ KUNA TATIZO: " + (data.error?.message || "Angalia API Key na Billing");
+        }
+    } catch(e) {
+        jibuDiv.innerText = "❌ TATIZO LA MTANDAO: " + e.message;
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "TUMA SWALI";
+    }
+}
+</script>
+</body>
+</html>
