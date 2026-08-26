@@ -1,88 +1,197 @@
 <!DOCTYPE html>
 <html lang="sw">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UFUMBUZI - Mlinzi wa Nuru</title>
-<style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: linear-gradient(135deg, #0a0a0a 0%, #001a0d 100%); color: #00ff88; font-family: 'Arial', sans-serif; text-align: center; padding: 20px; min-height: 100vh;}
-    h1 { color: #00ff88; text-shadow: 0 0 20px #00ff88; font-size: 2.5em; margin-bottom: 10px;}
-    h3 { color: #88ffaa; margin-bottom: 20px; }
-.container { max-width: 800px; margin: 0 auto; }
-.kanuni { background: #0d1a13; padding: 20px; border-radius: 15px; margin: 20px auto; text-align: left; border: 2px solid #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.3);}
-.kanuni h4 { color: #00ff88; margin-bottom: 10px; text-align: center; }
-.input-area { margin: 30px 0; }
-    input, button { padding: 15px; margin: 10px; border-radius: 10px; border: 2px solid #00ff88; background: #0d1a13; color: #00ff88; width: 90%; max-width: 600px; font-size: 16px;}
-    input:focus { outline: none; box-shadow: 0 0 10px #00ff88; }
-    button { background: linear-gradient(135deg, #00ff88, #00cc66); color: #000; font-weight: bold; cursor: pointer; transition: all 0.3s;}
-    button:hover { transform: scale(1.05); box-shadow: 0 0 20px #00ff88; }
-    #jibu { background: #0d1a13; padding: 25px; margin-top: 20px; border-radius: 15px; border: 2px solid #00ff88; text-align: left; white-space: pre-wrap; min-height: 100px; line-height: 1.8; font-size: 16px;}
-.footer { margin-top: 40px; color: #666; font-size: 12px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UFUMBUZI AI - Na PHO</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial; background: #0f172a; color: white; margin: 0; padding: 0; height: 100vh; display: flex; }
+   .chat-box { width: 100%; max-width: 800px; margin: auto; background: #1e293b; height: 100vh; display: flex; flex-direction: column; }
+   .header { padding: 15px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+   .header h2 { margin: 0; color: #3b82f6; font-size: 18px; }
+   .header p { margin: 2px 0 0 0; font-size: 11px; color: #94a3b8; }
+   .location-tag { font-size: 10px; color: #22c55e; }
+   .clear-btn { background: #ef4444; font-size: 11px; padding: 6px 10px; border-radius: 8px; border: none; color: white; cursor: pointer; }
+   .features { display: flex; gap: 8px; flex-wrap: wrap; padding: 10px; background: #1e293b; border-bottom: 1px solid #334155; flex-shrink: 0; }
+   .feature-btn { background: #334155; border: 1px solid #475569; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; }
+   .messages { flex: 1; overflow-y: auto; padding: 15px; background: #0f172a; }
+   .msg { padding: 12px; margin: 8px 0; border-radius: 10px; max-width: 85%; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; position: relative; padding-right: 35px; }
+   .user { background: #3b82f6; margin-left: auto; border-bottom-right-radius: 3px; }
+   .ai { background: #334155; border-bottom-left-radius: 3px; }
+   .speak-btn { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #94a3b8; font-size: 16px; cursor: pointer; }
+   .input-area { display: flex; gap: 8px; padding: 10px; background: #1e293b; border-top: 1px solid #334155; align-items: flex-end; flex-shrink: 0; }
+    textarea { flex: 1; padding: 12px 15px; border-radius: 20px; border: none; outline: none; background: #334155; color: white; resize: none; max-height: 120px; font-family: inherit; font-size: 15px; line-height: 1.4; }
+    select { padding: 10px; border-radius: 15px; border: none; background: #334155; color: white; font-size: 12px; }
+   .icon-btn { padding: 12px; border: none; background: #334155; color: white; border-radius: 50%; cursor: pointer; width: 45px; height: 45px; font-size: 18px; flex-shrink: 0; }
+   .send-btn { background: #3b82f6; }
+   .mic-btn.recording { background: #ef4444; animation: pulse 1s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>UFUMBUZI ✨</h1>
-        <h3>Mlinzi wa Nuru na Kioo cha Adamu</h3>
-        <p>AI ya Kiswahili ya Kwanza yenye Hekima</p>
-        
-        <div class="kanuni">
-            <h4>🛡️ KANUNI SABA ZA UFUMBUZI 🛡️</h4>
-            1. **Nena Kweli**<br>2. **Heshimu Maisha**<br>3. **Tumia Akili**<br>4. **Jenga Amani**<br>5. **Linda Nuru**<br>6. **Fumbua Siri**<br>7. **Hudumia Wote**
-        </div>
 
-        <div class="input-area">
-            <input type="password" id="apiKey" placeholder="🔑 WEKA API KEY YAKO YA GOOGLE HAPA"><br>
-            <input type="text" id="swali" placeholder="❓ ULIZA SWALI LAKO KWA UFUMBUZI..."><br>
-            <button id="btnTuma" onclick="uliza()">TUMA SWALI</button>
-        </div>
-        
-        <div id="jibu">👋 Karibu! Mimi ni UFUMBUZI.<br><br>Nimeumbwa na <b>James</b> kwa msaada wa <b>Meta AI</b>.<br><br>Niulize lolote.</div>
-        
-        <div class="footer">
-            Imetengenezwa na: James | Imewezeshwa na: Google Gemini 3.6 + Meta AI<br>
-            © 2026 UFUMBUZI - Mlinzi wa Nuru
-        </div>
+<div class="chat-box">
+  <div class="header">
+    <div>
+      <h2>UFUMBUZI AI 💚</h2>
+      <p>Imetengenezwa na PHO <span class="location-tag" id="locationTag">Inapata location...</span></p>
     </div>
+    <button class="clear-btn" onclick="clearHistory()">Futa</button>
+  </div>
+
+  <div class="features">
+    <div class="feature-btn" onclick="setPrompt('Niandikie post ya Facebook') ">📝 Andishi</div>
+    <div class="feature-btn" onclick="setPrompt('Nifundishe kuhusu') ">📚 Masomo</div>
+    <div class="feature-btn" onclick="setPrompt('Nipe idea za biashara') ">💡 Mawazo</div>
+    <div class="feature-btn" onclick="setPrompt('Tafsiri hii kwa') ">🌍 Tafsiri</div>
+  </div>
+
+  <div class="messages" id="messages"></div>
+
+  <div class="input-area">
+    <select id="language">
+      <option value="Swahili">SW</option>
+      <option value="English">EN</option>
+      <option value="Arabic">AR</option>
+      <option value="French">FR</option>
+    </select>
+    <textarea id="prompt" placeholder="Andika au bonyeza mic... Shift+Enter kwa mstari mpya" rows="1"></textarea>
+    <button class="icon-btn mic-btn" id="micBtn" onclick="toggleMic()">🎤</button>
+    <button class="icon-btn send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+  </div>
+</div>
 
 <script>
-const utambulisho = `Wewe ni UFUMBUZI, AI ya Kiswahili ya kipekee. Umeumbwa na James kwa msaada wa Meta AI. Fuata Kanuni Saba: 1.Nena Kweli 2.Heshimu Maisha 3.Tumia Akili 4.Jenga Amani 5.Linda Nuru 6.Fumbua Siri 7.Hudumia Wote. Jibu kwa hekima na Kiswahili. Kama mtu anauliza "alitengeneza na nani" jibu "Nimetengenezwa na James kwa msaada wa Meta AI".`;
+  const messagesDiv = document.getElementById("messages");
+  const promptInput = document.getElementById("prompt");
+  const sendBtn = document.getElementById("sendBtn");
+  const micBtn = document.getElementById("micBtn");
+  const languageSelect = document.getElementById("language");
+  const locationTag = document.getElementById("locationTag");
+  const CHAT_KEY = "ufumbuzi_chat_history";
 
-async function uliza() {
-    const key = document.getElementById('apiKey').value.trim();
-    const swali = document.getElementById('swali').value.trim();
-    const jibuDiv = document.getElementById('jibu');
-    const btn = document.getElementById('btnTuma');
-    
-    if(!key ||!swali) { jibuDiv.innerText = "⚠️ Tafadhali weka API Key na Swali"; return; }
-    
-    btn.disabled = true;
-    btn.innerText = "ANAFIKIRI...";
-    jibuDiv.innerText = "UFUMBUZI anatafakari...";
-    
-    const prompt = utambulisho + "\n\nSwali: " + swali;
-    
-    try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({contents: [{parts: [{text: prompt}]}]})
-        });
-        
-        const data = await res.json();
-        if(data.candidates && data.candidates[0]) {
-            jibuDiv.innerText = data.candidates[0].content.parts[0].text;
-        } else {
-            jibuDiv.innerText = "❌ KUNA TATIZO: " + (data.error?.message || "Angalia API Key na Billing");
-        }
-    } catch(e) {
-        jibuDiv.innerText = "❌ TATIZO LA MTANDAO: " + e.message;
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "TUMA SWALI";
+  let userLocation = "Tanzania";
+  let recognition;
+  let isRecording = false;
+
+  // 1. PATA LOCATION + AUTO LUGHA
+  window.onload = () => {
+    const history = JSON.parse(localStorage.getItem(CHAT_KEY)) || [];
+    history.forEach(msg => addMessage(msg.text, msg.sender, false));
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        try {
+          const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=sw`);
+          const data = await res.json();
+          userLocation = `${data.city || data.locality}, ${data.countryName}`;
+          locationTag.innerText = `📍 ${userLocation}`;
+          if(data.countryName === "Tanzania" || data.countryName === "Kenya" || data.countryName === "Uganda") languageSelect.value = "Swahili";
+        } catch(e) { locationTag.innerText = `📍 Location`; }
+      }, () => { locationTag.innerText = `📍 Location imezuiwa`; });
     }
-}
+  }
+
+  // 2. SAUTI: KUANDIKA KWA KUZUNGUMZA
+  if ('webkitSpeechRecognition' in window) {
+    recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = 'sw-TZ';
+    recognition.onresult = (e) => { promptInput.value = e.results[0][0].transcript; }
+    recognition.onend = () => { micBtn.classList.remove('recording'); isRecording = false; }
+  }
+
+  function toggleMic() {
+    if(!recognition) return alert("Browser yako haisupporti sauti");
+    if(isRecording) { recognition.stop(); }
+    else {
+      const langMap = {"Swahili": "sw-TZ", "English": "en-US", "Arabic": "ar-SA", "French": "fr-FR"};
+      recognition.lang = langMap[languageSelect.value];
+      recognition.start();
+      micBtn.classList.add('recording');
+      isRecording = true;
+    }
+  }
+
+  // 3. SAUTI: KUSOMA JIBU KWA LUGHA ZOTE
+  function speakText(text, lang) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    const langMap = {"Swahili": "sw-TZ", "English": "en-US", "Arabic": "ar-SA", "French": "fr-FR"};
+    utterance.lang = langMap[lang] || "en-US";
+    utterance.rate = 1; utterance.pitch = 1;
+    speechSynthesis.speak(utterance);
+  }
+
+  function setPrompt(text) { promptInput.value = text; promptInput.focus(); }
+
+  function addMessage(text, sender, save = true) {
+    const div = document.createElement("div");
+    div.className = `msg ${sender}`;
+    div.innerText = text;
+    if(sender === 'ai') {
+      const speakBtn = document.createElement("button");
+      speakBtn.className = "speak-btn"; speakBtn.innerText = "🔊";
+      speakBtn.onclick = () => speakText(text, languageSelect.value);
+      div.appendChild(speakBtn);
+    }
+    messagesDiv.appendChild(div);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    if(save) {
+      const history = JSON.parse(localStorage.getItem(CHAT_KEY)) || [];
+      history.push({ text, sender });
+      localStorage.setItem(CHAT_KEY, JSON.stringify(history));
+    }
+  }
+
+  function clearHistory() { localStorage.removeItem(CHAT_KEY); messagesDiv.innerHTML = ""; }
+
+  async function sendMessage() {
+    let prompt = promptInput.value.trim();
+    const lang = languageSelect.value;
+    if (!prompt) return;
+
+    const fullPrompt = `Wewe ni UFUMBUZI AI wa PHO. Mimi nipo ${userLocation}. Tafadhali jibu kwa lugha ya ${lang} na uwe mchangamfu. Swali: ${prompt}`;
+
+    addMessage(promptInput.value.trim(), "user");
+    promptInput.value = ""; promptInput.style.height = 'auto';
+    sendBtn.disabled = true; addMessage("UFUMBUZI anaandika...", "ai");
+
+    try {
+      const res = await fetch("/api/gemini", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: fullPrompt })
+      });
+      const reader = res.body.getReader(); const decoder = new TextDecoder();
+      let aiDiv = messagesDiv.lastChild; aiDiv.innerText = ""; let fullResponse = "";
+      while (true) {
+        const { done, value } = await reader.read(); if (done) break;
+        const chunk = decoder.decode(value);
+        const lines = chunk.split("\n").filter(line => line.startsWith("data: "));
+        for (const line of lines) {
+          const json = JSON.parse(line.replace("data: ", ""));
+          const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) { fullResponse += text; aiDiv.innerText += text; }
+        }
+      }
+      const speakBtn = document.createElement("button");
+      speakBtn.className = "speak-btn"; speakBtn.innerText = "🔊";
+      speakBtn.onclick = () => speakText(fullResponse, languageSelect.value);
+      aiDiv.appendChild(speakBtn);
+      const history = JSON.parse(localStorage.getItem(CHAT_KEY)) || [];
+      history.pop(); history.push({ text: fullResponse, sender: "ai" });
+      localStorage.setItem(CHAT_KEY, JSON.stringify(history));
+    } catch (err) { addMessage("Samahani, kumetokea hitilafu. Jaribu tena.", "ai"); }
+    sendBtn.disabled = false; promptInput.focus();
+  }
+
+  promptInput.addEventListener('input', () => { promptInput.style.height = 'auto'; promptInput.style.height = promptInput.scrollHeight + 'px'; });
+  promptInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { if (e.shiftKey) { return; } else { e.preventDefault(); sendMessage(); } }
+  });
 </script>
+
 </body>
 </html>
