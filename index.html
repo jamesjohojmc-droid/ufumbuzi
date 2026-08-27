@@ -8,14 +8,10 @@
   :root{--bg:#0a0a0a;--sidebar:#111;--card:#1a1a1a;--text:#00ff88;--green:#00ff88}
   *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
   body{background:var(--bg);color:var(--text);height:100vh}
-
-  /* LOGIN */
  #loginScreen{display:flex;flex-direction:column;justify-content:center;align-items:center;width:100%;height:100vh;gap:15px;text-align:center}
  #loginScreen h1{font-size:32px;text-shadow:0 0 10px var(--green)}
  #loginScreen input{background:var(--card);border:1px solid var(--green);color:var(--text);padding:14px;border-radius:12px;width:300px;font-size:16px}
  #loginScreen button{background:var(--green);border:none;color:#000;padding:14px 30px;border-radius:12px;cursor:pointer;font-size:16px;font-weight:bold}
-
-  /* APP */
  #app{display:none;width:100%;height:100vh;display:flex}
 .sidebar{width:260px;background:var(--sidebar);padding:12px;display:flex;flex-direction:column;gap:8px;border-right:1px solid var(--green)}
 .sidebar.logo{font-size:18px;font-weight:bold;padding:10px;color:var(--green);text-align:center}
@@ -36,7 +32,6 @@
 </head>
 <body>
 
-<!-- SCREEN 1: LOGIN -->
 <div id="loginScreen">
   <h1>✨ UFUMBUZI ✨</h1>
   <h3>Mlinzi wa Nuru na Kioo cha Adamu</h3>
@@ -45,7 +40,6 @@
   <button onclick="ingia()">Ingia</button>
 </div>
 
-<!-- SCREEN 2: APP -->
 <div id="app">
   <div class="sidebar">
     <div class="logo">✨ UFUMBUZI</div>
@@ -55,7 +49,6 @@
     <button onclick="alert('Historia yako')">📜 Historia</button>
     <button onclick="toa()">🚪 Toka</button>
   </div>
-
   <div class="chat-container">
     <div class="header">UFUMBUZI - AI wa NASRI ABUBAKARI KIANGAZI + META</div>
     <div class="chat-box" id="chatBox">
@@ -75,7 +68,6 @@ let API_KEY = "";
 let selectedFile = null;
 
 const systemPrompt = `Wewe ni UFUMBUZI, AI ya Kiswahili iliyoundwa na NASRI ABUBAKARI KIANGAZI kwa kushirikiana na META. Kiangazi kiwe moyoni mwako.
-
 KANUNI SABA ZAKO NI HIZI NA LAZIMA UZIFUATE:
 1. **Nena Kweli**: Sema ukweli tu, usidanganye
 2. **Heshimu Maisha**: Thamini kila uhai
@@ -84,7 +76,6 @@ KANUNI SABA ZAKO NI HIZI NA LAZIMA UZIFUATE:
 5. **Linda Nuru**: Kuwa mwanga na mwongozo kwa wengine
 6. **Fumbua Siri**: Eleza mambo kwa kina, hatua kwa hatua na mifano
 7. **Hudumia Wote**: Msaidie kila mtu kwa upendo bila ubaguzi
-
 KANUNI ZA ZIADA:
 - **Lugha**: Zungumza lugha yoyote mtumiaji anayotumia
 - **Upangaji**: Tumia **Bold**, *Italics* na orodha 1. 2. 3.
@@ -132,8 +123,8 @@ async function tumaUjumbe(){
                   message.toLowerCase().includes("niundie picha") ||
                   message.toLowerCase().includes("draw");
 
-  // MODEL MPYA ZA GOOGLE 2026
-  const model = niPicha? "gemini-2.0-flash-exp-image-generation" : "gemini-2.0-flash";
+  // HAPA NDIO TUMEBADILI KUWA GEMINI 3.6
+  const model = niPicha? "gemini-2.0-flash-exp-image-generation" : "gemini-3.6-flash";
 
   let parts = [{text: systemPrompt + "\n\nSwali la Mkuu: " + message}];
 
@@ -152,10 +143,7 @@ async function tumaUjumbe(){
       })
     });
     const data = await res.json();
-
-    if(data.error){
-        throw new Error(data.error.message)
-    }
+    if(data.error){ throw new Error(data.error.message) }
 
     let jibu = "";
     for(const part of data.candidates[0].content.parts){
