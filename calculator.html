@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<title>Calculator - UFUMBUZI</title>
+<style>
+body{background:#000;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;font-family:Arial}
+.calc{background:#111;padding:25px;border-radius:20px;border:2px solid #00ff88;box-shadow:0 0 25px #00ff88}
+#display{width:320px;height:90px;background:#000;color:#00ff88;font-size:45px;text-align:right;padding:10px;border:2px solid #00ff88;border-radius:10px;margin-bottom:15px;outline:none}
+.buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.btn{width:75px;height:75px;font-size:26px;font-weight:bold;background:#1a1a1a;color:#00ff88;border:2px solid #00ff88;border-radius:15px;cursor:pointer}
+.btn:hover{background:#00ff88;color:#000;transform:scale(1.05)}
+.btn.equal{grid-column:span 2;width:162px;background:#00ff88;color:#000}
+.btn.clear{background:#ff3333;color:#fff;border-color:#ff3333}
+</style>
+</head>
+<body>
+<div class="calc">
+<input type="text" id="display" readonly placeholder="0">
+<div class="buttons">
+<button class="btn clear" onclick="clearDisplay()">C</button>
+<button class="btn clear" onclick="del()">DEL</button>
+<button class="btn" onclick="append('/')">/</button>
+<button class="btn" onclick="append('*')">*</button>
+<button class="btn" onclick="append('7')">7</button>
+<button class="btn" onclick="append('8')">8</button>
+<button class="btn" onclick="append('9')">9</button>
+<button class="btn" onclick="append('-')">-</button>
+<button class="btn" onclick="append('4')">4</button>
+<button class="btn" onclick="append('5')">5</button>
+<button class="btn" onclick="append('6')">6</button>
+<button class="btn" onclick="append('+')">+</button>
+<button class="btn" onclick="append('1')">1</button>
+<button class="btn" onclick="append('2')">2</button>
+<button class="btn" onclick="append('3')">3</button>
+<button class="btn" onclick="append('.')">.</button>
+<button class="btn" onclick="append('0')">0</button>
+<button class="btn equal" onclick="calculate()">=</button>
+</div>
+</div>
+<script>
+let display = document.getElementById('display');
+function append(val){ if(display.value=='0')display.value=''; display.value += val; }
+function clearDisplay(){ display.value = '0'; }
+function del(){ display.value = display.value.slice(0,-1); if(display.value=='')display.value='0'; }
+function calculate(){ try{display.value = eval(display.value)}catch{display.value='Error'} }
+</script>
+</body>
+</html>
