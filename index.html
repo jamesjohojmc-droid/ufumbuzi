@@ -31,7 +31,7 @@
 .input-area textarea{flex:1;background:var(--card);border:1px solid #333;color:var(--text);padding:14px;border-radius:12px;resize:none;font-size:15px}
 .input-area button{background:var(--card);border:1px solid #333;color:var(--text);padding:14px 16px;border-radius:12px;cursor:pointer;font-size:18px}
 .input-area button:hover{border-color:var(--green)}
-#jibu img{max-width:100%;border-radius:10px;margin-top:10px;border:1px solid var(--green)}
+.message img{max-width:100%;border-radius:10px;margin-top:10px;border:1px solid var(--green)}
 </style>
 </head>
 <body>
@@ -128,18 +128,18 @@ async function tumaUjumbe(){
   userInput.value = "";
   onyeshaUjumbe("UFUMBUZI anafikiri...", 'ai');
 
-  // Angalia kama ni ombi la picha
   const niPicha = message.toLowerCase().includes("tengeneza picha") ||
                   message.toLowerCase().includes("niundie picha") ||
                   message.toLowerCase().includes("draw");
-  const model = niPicha? "gemini-2.0-flash-exp-image-generation" : "gemini-1.5-flash";
+
+  // MODEL MPYA ZA GOOGLE 2026
+  const model = niPicha? "gemini-2.0-flash-exp-image-generation" : "gemini-2.0-flash";
 
   let parts = [{text: systemPrompt + "\n\nSwali la Mkuu: " + message}];
 
-  // Kama kuna file imeambatanishwa
   if(selectedFile){
     const base64 = await toBase64(selectedFile);
-    parts.push({ inline_data: { mime_type: selectedFile.type, data: base64.split(',')[1] } });
+    parts.push({ inlineData: { mimeType: selectedFile.type, data: base64.split(',')[1] } });
   }
 
   try{
@@ -147,11 +147,16 @@ async function tumaUjumbe(){
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        contents: [{parts}],
+        contents: [{parts: parts}],
         generationConfig: {responseModalities: niPicha? ["TEXT", "IMAGE"] : ["TEXT"]}
       })
     });
     const data = await res.json();
+
+    if(data.error){
+        throw new Error(data.error.message)
+    }
+
     let jibu = "";
     for(const part of data.candidates[0].content.parts){
       if(part.text){ jibu += part.text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g,'<br>') + "<br>"; }
@@ -162,7 +167,7 @@ async function tumaUjumbe(){
     document.querySelector('.message.ai:last-child').innerHTML = jibu;
     selectedFile = null;
   }catch(e){
-    document.querySelector('.message.ai:last-child').innerHTML = "Samahani mkuu, kuna tatizo 😅 Hakikisha key yako ni sahihi";
+    document.querySelector('.message.ai:last-child').innerHTML = "Samahani mkuu, kuna tatizo: " + e.message + " 😅";
   }
 }
 function toBase64(file){return new Promise((r)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(file)})}
