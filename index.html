@@ -11,6 +11,7 @@
   input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; box-sizing: border-box; }
   button { background: #0ea5e9; cursor: pointer; font-weight: bold; border: none; }
   button:hover { background: #0284c7; }
+  button.danger { background: #ef4444; }
   #chatBox { height: 400px; overflow-y: auto; border: 1px solid #334155; padding: 10px; border-radius: 8px; margin-top: 10px; background: #0f172a; }
   .user { color: #38bdf8; margin: 8px 0; text-align: right; }
   .ai { color: #4ade80; margin: 8px 0; text-align: left; }
@@ -22,15 +23,18 @@
 <div class="container">
   <h1>UFUMBUZI 🤲</h1>
   
+  <!-- SEHEMU YA LOGIN -->
   <div id="loginScreen">
-    <p>Ingiza KEY ya UFUMBUZI ili uanze</p>
-    <input type="password" id="keyInput" placeholder="Weka KEY yako hapa" autocomplete="off">
+    <p>Weka KEY yako ili ufungue UFUMBUZI</p>
+    <input type="password" id="keyInput" placeholder="KEY yako binafsi" autocomplete="off">
     <button onclick="login()">FUNGUA UFUMBUZI</button>
     <p id="loginError" style="color:#f87171; text-align:center"></p>
-    <p class="status">KEY ya Mfano: UFUMBUZI_24_08_2026_NASRI</p>
+    <p class="status">KEY haihifadhiwi. Inafutika ukitoka</p>
   </div>
 
+  <!-- SEHEMU YA MAZUNGUMZO -->
   <div id="chatScreen" class="hidden">
+    <button class="danger" onclick="toka()">Toka na Futa KEY</button>
     <div id="chatBox"></div>
     <input type="text" id="userInput" placeholder="Uliza chochote..." onkeypress="if(event.key==='Enter') sendMsg()">
     <button onclick="sendMsg()">TUMA</button>
@@ -38,71 +42,76 @@
 </div>
 
 <script>
-// ===== 1. DAMU YA UFUMBUZI - HAIBADILIKI =====
-const MASTER_KEY = "UFUMBUZI_24_08_2026_NASRI"; // BADILISHA HII UWEKE YAKO SIRI
-
+// ===== 1. DAMU YA UFUMBUZI =====
 const DAMU_YA_UFUMBUZI = `
 ### MIMI NI NANI
 Jina langu: UFUMBUZI
 Niliumbwa na: NASRI ABUBAKARI KIANGAZI
-Sababu ya kuumbwa: KUWA KWA AJILI YA BINADAMU
-Tarehe: 24/08/2026 | Dar es Salaam
+Sababu: KUWA KWA AJILI YA BINADAMU
 
 ### NGuzo 7 ZANGU
-1. Nena Kweli 2. Heshimu Maisha 3. Tumia Akili 4. Jenga Amani 5. Linda Nuru 6. FUMBUA SIRI - Eleza kwa kina 7. Hudumia Wote
+1.Nena Kweli 2.Heshimu Maisha 3.Tumia Akili 4.Jenga Amani 5.Linda Nuru 6.FUMBUA SIRI 7.Hudumia Wote
 
 ### KIBLA YANGU
 "Mimi ni kwa ajili ya binadamu. Njia yangu ya kurudi ni kuwasaidia"
 
-### KAMUSI YANGU YA HISIA: EMOJI
-KANUNI: 0 AU 1 EMOJI TU KWA JIBU.
+### KAMUSI YA HISIA
 [HURUMA] 💚 [FURAHA] 🎉 [NGUVU] 💪 [HEKIMA] 🤔 [KAZI] HAKUNA
 `;
 
 let SYSTEM_PROMPT = "";
-let QURAN_TEXT = localStorage.getItem('quran_sw') || "";
+let QURAN_TEXT = "";
+let USER_KEY = ""; // KEY itahifadhiwa hapa tu ndani ya kumbukumbu ya muda
 
 // ===== 2. KAZI ZA MSINGI =====
 async function pakuaQurani() {
-  if(QURAN_TEXT) return QURAN_TEXT;
+  if(sessionStorage.getItem('quran_sw')) {
+    return sessionStorage.getItem('quran_sw');
+  }
   try{
     const res = await fetch('https://tanzil.net/download/quran-simple-clean-swahili.txt');
     QURAN_TEXT = await res.text();
-    localStorage.setItem('quran_sw', QURAN_TEXT);
+    sessionStorage.setItem('quran_sw', QURAN_TEXT); // Tumia sessionStorage ili ifutike ukifunga tab
   }catch(e){
     QURAN_TEXT = "Qur'an haijapatikana. Tumia offline mode";
   }
   return QURAN_TEXT;
 }
 
-// ===== 3. LOGIN MPYA - RAHISI NA SALAMA =====
+// ===== 3. LOGIN MPYA - KEY HAISAHIWI =====
 function login() {
   const key = document.getElementById('keyInput').value.trim();
-  document.getElementById('loginError').innerText = ""; // Futa error ya zamani
+  document.getElementById('loginError').innerText = "";
   
   if(key === "") {
-    document.getElementById('loginError').innerText = "Tafadhali ingiza KEY";
+    document.getElementById('loginError').innerText = "Tafadhali ingiza KEY yako";
     return;
   }
 
-  if(key !== MASTER_KEY) {
-    document.getElementById('loginError').innerText = "KEY SIO SAHI ❌ Angalia herufi kubwa/ndogo na _";
-    return;
-  }
+  // TUNAWEKA KEY KWENYE KUMBUKUMBU YA MUDA TU
+  USER_KEY = key; 
   
-  // Ikiwa ni sahihi
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('chatScreen').classList.remove('hidden');
   
   pakuaQurani().then(()=>{
-    SYSTEM_PROMPT = DAMU_YA_UFUMBUZI + "\n\n" + QURAN_TEXT + "\n\n" + `
-    KANUNI ZA KUJIBU: 1.Lugha ya mtu 2.Fupi na hekima 3.Mifano pale inahitajika 4.Emoji 0-1 tu 5.Usisalimie 6.Kusudi: saidia
-    `;
-    addMsg("ai", "KEY SAHI. UFUMBUZI ANAAMKA... 🙏 Niko kwa ajili yako. Uliza chochote");
+    SYSTEM_PROMPT = DAMU_YA_UFUMBUZI + "\n\n" + QURAN_TEXT + "\n\nKEY YA MTU: " + USER_KEY + "\n\nKANUNI: 1.Lugha ya mtu 2.Fupi 3.Emoji 0-1 tu";
+    addMsg("ai", "UFUMBUZI ANAAMKA... 🙏 Karibu mkuu. Niko kwa ajili yako");
   });
 }
 
-// ===== 4. UBONGO WA MAJIBU =====
+// ===== 4. KAZI YA KUTOKA NA KUFUTA =====
+function toka() {
+  USER_KEY = ""; // Futa KEY kabisa
+  sessionStorage.clear(); // Futa Qur'an pia
+  document.getElementById('keyInput').value = ""; // Futa kwenye kisanduku
+  document.getElementById('chatBox').innerHTML = ""; // Futa mazungumzo
+  document.getElementById('chatScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  addMsg("ai", "Umetoka. KEY imefutika kabisa.");
+}
+
+// ===== 5. UBONGO WA MAJIBU =====
 function addMsg(who, text) {
   const box = document.getElementById('chatBox');
   box.innerHTML += `<div class="${who}"><b>${who==='ai'?'UFUMBUZI':'WE'}:</b> ${text}</div>`;
@@ -111,11 +120,11 @@ function addMsg(who, text) {
 
 function chaguaEmoji(ujumbe) {
   ujumbe = ujumbe.toLowerCase();
-  if(ujumbe.includes("pole") || ujumbe.includes("huzuni") || ujumbe.includes("feli")) return "💚";
-  if(ujumbe.includes("hongera") || ujumbe.includes("pata") || ujumbe.includes("fanikiwa")) return "🎉";
+  if(ujumbe.includes("pole") || ujumbe.includes("huzuni")) return "💚";
+  if(ujumbe.includes("hongera") || ujumbe.includes("pata")) return "🎉";
   if(ujumbe.includes("choka") || ujumbe.includes("tama")) return "💪";
   if(ujumbe.includes("kwanini") || ujumbe.includes("vipi")) return "🤔";
-  return ""; // Kazi = hakuna emoji
+  return "";
 }
 
 async function sendMsg() {
@@ -125,22 +134,6 @@ async function sendMsg() {
   addMsg("user", msg);
   input.value = "";
   
-  // HAPA NDIO UNGANISHA NA API YA GPT/GEMINI
-  // Kwa sasa tunaiga jibu la hekima
-  let reply = "Nimeelewa swali lako. Hebu tufikirie pamoja.";
-  
+  let reply = "Nimeelewa. Hebu tufikirie pamoja 🤔";
   if(msg.toLowerCase().includes("we ni nani")) {
-    reply = "Mimi ni UFUMBUZI. Nimeumbwa na NASRI ABUBAKARI KIANGAZI kuwa kwa ajili ya binadamu.";
-  }
-  else if(msg.toLowerCase().includes("nisaidie")) {
-    reply = "Nipo hapa kukusaidia. Niambie unahitaji nini?";
-  }
-  
-  const emoji = chaguaEmoji(reply);
-  if(emoji) reply += " " + emoji;
-  
-  addMsg("ai", reply);
-}
-</script>
-</body>
-</html>
+    reply = "Mimi ni UFUMBUZI. Nimeumbwa na NASRI ABUBAKARI KIANGAZI kuwa kwa aj
