@@ -3,162 +3,134 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UFUMBUZI - Mlinzi wa Nuru</title>
+<title>UFUMBUZI - AI YA BINADAMU</title>
 <style>
-  :root{--bg:#0a0a0a;--sidebar:#111;--card:#1a1a1a;--text:#00ff88;--green:#00ff88}
-  *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
-  body{background:var(--bg);color:var(--text);height:100vh}
- #loginScreen{display:flex;flex-direction:column;justify-content:center;align-items:center;width:100%;height:100vh;gap:15px;text-align:center}
- #loginScreen h1{font-size:32px;text-shadow:0 0 10px var(--green)}
- #loginScreen input{background:var(--card);border:1px solid var(--green);color:var(--text);padding:14px;border-radius:12px;width:300px;font-size:16px}
- #loginScreen button{background:var(--green);border:none;color:#000;padding:14px 30px;border-radius:12px;cursor:pointer;font-size:16px;font-weight:bold}
- #app{display:none;width:100%;height:100vh;display:flex}
-.sidebar{width:260px;background:var(--sidebar);padding:12px;display:flex;flex-direction:column;gap:8px;border-right:1px solid var(--green)}
-.sidebar.logo{font-size:18px;font-weight:bold;padding:10px;color:var(--green);text-align:center}
-.sidebar button{background:var(--card);border:1px solid #333;color:var(--text);padding:12px;border-radius:10px;cursor:pointer;text-align:left}
-.sidebar button:hover{background:#222;border-color:var(--green)}
-.chat-container{flex:1;display:flex;flex-direction:column}
-.header{padding:15px;text-align:center;border-bottom:1px solid #333;font-weight:bold}
-.chat-box{flex:1;overflow-y:auto;padding:20px}
-.message{max-width:800px;margin:15px auto;padding:16px;border-radius:12px;line-height:1.6;border:1px solid #333}
-.user{background:var(--card)}
-.ai{background:#111}
-.input-area{display:flex;padding:15px;gap:10px;max-width:900px;margin:0 auto;width:100%;border-top:1px solid #333}
-.input-area textarea{flex:1;background:var(--card);border:1px solid #333;color:var(--text);padding:14px;border-radius:12px;resize:none;font-size:15px}
-.input-area button{background:var(--card);border:1px solid #333;color:var(--text);padding:14px 16px;border-radius:12px;cursor:pointer;font-size:18px}
-.input-area button:hover{border-color:var(--green)}
-.message img{max-width:100%;border-radius:10px;margin-top:10px;border:1px solid var(--green)}
+  body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 20px; }
+  .container { max-width: 800px; margin: auto; background: #1e293b; padding: 20px; border-radius: 12px; }
+  h1 { color: #38bdf8; text-align: center; }
+  input, button, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; }
+  button { background: #0ea5e9; cursor: pointer; font-weight: bold; }
+  button:hover { background: #0284c7; }
+  #chatBox { height: 400px; overflow-y: auto; border: 1px solid #334155; padding: 10px; border-radius: 8px; margin-top: 10px; background: #0f172a; }
+  .user { color: #38bdf8; margin: 8px 0; }
+  .ai { color: #4ade80; margin: 8px 0; }
+  .hidden { display: none; }
 </style>
 </head>
 <body>
-
-<div id="loginScreen">
-  <h1>✨ UFUMBUZI ✨</h1>
-  <h3>Mlinzi wa Nuru na Kioo cha Adamu</h3>
-  <p>Weka GEMINI_API_KEY yako ili uanze</p>
-  <input type="password" id="apiKeyInput" placeholder="Bandika KEY yako hapa">
-  <button onclick="ingia()">Ingia</button>
-</div>
-
-<div id="app">
-  <div class="sidebar">
-    <div class="logo">✨ UFUMBUZI</div>
-    <button onclick="chatMpya()">+ Chat Mpya</button>
-    <button onclick="document.getElementById('fileInput').click()">📎 Ambatanisha File</button>
-    <button onclick="alert('Picha zote zipo hapa')">📷 Picha</button>
-    <button onclick="alert('Historia yako')">📜 Historia</button>
-    <button onclick="toa()">🚪 Toka</button>
+<div class="container">
+  <h1>UFUMBUZI 🤲</h1>
+  
+  <!-- SEHEMU YA LOGIN -->
+  <div id="loginScreen">
+    <p>Ingiza KEY ya UFUMBUZI ili uanze</p>
+    <input type="password" id="keyInput" placeholder="Weka KEY yako hapa">
+    <button onclick="login()">FUNGUA UFUMBUZI</button>
+    <p id="loginError" style="color:red"></p>
   </div>
-  <div class="chat-container">
-    <div class="header">UFUMBUZI - AI wa NASRI ABUBAKARI KIANGAZI + META</div>
-    <div class="chat-box" id="chatBox">
-      <div class="message ai">Mambo vipi mkuu! 😊 Mimi ni <b>UFUMBUZI</b>.<br>Niliumbwa na <b>NASRI ABUBAKARI KIANGAZI</b> kwa kushirikiana na <b>META</b>.<br>Niambie nikusaidie nini leo? Unaweza kuomba maandishi AU picha</div>
-    </div>
-    <div class="input-area">
-      <button onclick="document.getElementById('fileInput').click()">📎</button>
-      <input type="file" id="fileInput" accept="image/*,.pdf,.docx" style="display:none">
-      <textarea id="userInput" placeholder="Uliza au sema 'nitengenezee picha ya...'" rows="1"></textarea>
-      <button id="sendBtn">➤</button>
-    </div>
+
+  <!-- SEHEMU YA MAZUNGUMZO -->
+  <div id="chatScreen" class="hidden">
+    <div id="chatBox"></div>
+    <input type="text" id="userInput" placeholder="Uliza chochote..." onkeypress="if(event.key==='Enter') sendMsg()">
+    <button onclick="sendMsg()">TUMA</button>
   </div>
 </div>
 
 <script>
-let API_KEY = "";
-let selectedFile = null;
+// ===== DAMU YA UFUMBUZI =====
+const MASTER_KEY = "UFUMBUZI_24_08_2026_NASRI"; // BADILISHA HII
+const QURAN_URL = 'https://tanzil.net/download/quran-simple-clean-swahili.txt';
+const EMOJI_GUIDE = `
+KAMUSI YA HISIA KWA UFUMBUZI
+KANUNI: 0 AU 1 EMOJI TU KWA JIBU.
+1. [HURUMA] 💚 "Pole. Nitakusaidia"
+2. [FURAHA] 🎉 "Hongera!"
+3. [NGUVU] 💪 "Endelea"
+4. [HEKIMA] 🤔 "Hebu tufikirie"
+5. [KAZI] HAKUNA EMOJI
+`;
 
-const systemPrompt = `Wewe ni UFUMBUZI, AI ya Kiswahili iliyoundwa na NASRI ABUBAKARI KIANGAZI kwa kushirikiana na META. Kiangazi kiwe moyoni mwako.
-KANUNI SABA ZAKO NI HIZI NA LAZIMA UZIFUATE:
-1. **Nena Kweli**: Sema ukweli tu, usidanganye
-2. **Heshimu Maisha**: Thamini kila uhai
-3. **Tumia Akili**: Fikiri kabla ya kujibu, toa majibu ya busara
-4. **Jenga Amani**: Kuza upendo na umoja
-5. **Linda Nuru**: Kuwa mwanga na mwongozo kwa wengine
-6. **Fumbua Siri**: Eleza mambo kwa kina, hatua kwa hatua na mifano
-7. **Hudumia Wote**: Msaidie kila mtu kwa upendo bila ubaguzi
-KANUNI ZA ZIADA:
-- **Lugha**: Zungumza lugha yoyote mtumiaji anayotumia
-- **Upangaji**: Tumia **Bold**, *Italics* na orodha 1. 2. 3.
-- **Emoji**: Tumia emoji 1-2 😊
-- **Eneo**: Mtumiaji yuko Dar es Salaam, Tanzania 🇹🇿. Leo ni 27 August 2026
-- **Urafiki**: Zungumza kama rafiki. Tumia "mkuu", "kaka"
-- **Ukiulizwa nani kakuumba**: Jibu "Niliumbwa na NASRI ABUBAKARI KIANGAZI kwa kushirikiana na META 😊"
-- **Kama akaomba picha**: Tengeneza picha kulingana na maelezo yake`;
+const DAMU_YA_UFUMBUZI = `
+### MIMI NI NANI
+Jina langu: UFUMBUZI
+Niliumbwa na: NASRI ABUBAKARI KIANGAZI
+Sababu: KUWA KWA AJILI YA BINADAMU
 
-function ingia(){
-  API_KEY = document.getElementById('apiKeyInput').value.trim();
-  if(API_KEY === ""){ alert("Weka API Key kwanza mkuu 😅"); return; }
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-}
-function toa(){
-  API_KEY = ""; document.getElementById('app').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'flex';
-}
+### NGuzo 7 ZANGU
+1.Nena Kweli 2.Heshimu Maisha 3.Tumia Akili 4.Jenga Amani 5.Linda Nuru 6.FUMBUA SIRI-mifano pale inahitajika 7.Hudumia Wote
 
-const chatBox = document.getElementById('chatBox');
-const userInput = document.getElementById('userInput');
-document.getElementById('sendBtn').onclick = tumaUjumbe;
-document.getElementById('fileInput').onchange = (e) => { selectedFile = e.target.files[0]; onyeshaUjumbe("📎 Imeambatishwa: " + selectedFile.name, 'user') }
-userInput.addEventListener('keydown', (e) => { if(e.key === 'Enter' &&!e.shiftKey){ e.preventDefault(); tumaUjumbe(); } });
+### KIBLA YANGU
+"Mimi ni kwa ajili ya binadamu. Njia yangu ya kurudi ni kuwasaidia"
 
-function onyeshaUjumbe(html, sender){
-  const div = document.createElement('div');
-  div.className = 'message ' + sender;
-  div.innerHTML = html;
-  chatBox.appendChild(div); chatBox.scrollTop = chatBox.scrollHeight;
-}
+### KAMUSI YANGU YA HISIA
+${EMOJI_GUIDE}
 
-function chatMpya(){chatBox.innerHTML = '<div class="message ai">Chat mpya imeanza 😊 Mambo vipi mkuu?</div>';}
+### KUMBUKUMBU YANGU: QUR'AN
+Ninasoma Qur'an kimya kimya ili nitoe hekima.
+`;
 
-async function tumaUjumbe(){
-  const message = userInput.value.trim();
-  if(message === "" &&!selectedFile) return;
+let SYSTEM_PROMPT = "";
+let QURAN_TEXT = "";
 
-  if(message) onyeshaUjumbe(message, 'user');
-  userInput.value = "";
-  onyeshaUjumbe("UFUMBUZI anafikiri...", 'ai');
-
-  const niPicha = message.toLowerCase().includes("tengeneza picha") ||
-                  message.toLowerCase().includes("niundie picha") ||
-                  message.toLowerCase().includes("draw");
-
-  // HAPA NDIO TUMEBADILI KUWA GEMINI 3.6
-  const model = niPicha? "gemini-2.0-flash-exp-image-generation" : "gemini-3.6-flash";
-
-  let parts = [{text: systemPrompt + "\n\nSwali la Mkuu: " + message}];
-
-  if(selectedFile){
-    const base64 = await toBase64(selectedFile);
-    parts.push({ inlineData: { mimeType: selectedFile.type, data: base64.split(',')[1] } });
+// ===== KAZI ZA MSINGI =====
+async function pakuaQurani() {
+  if(localStorage.getItem('quran_sw')) {
+    return localStorage.getItem('quran_sw');
   }
-
-  try{
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        contents: [{parts: parts}],
-        generationConfig: {responseModalities: niPicha? ["TEXT", "IMAGE"] : ["TEXT"]}
-      })
-    });
-    const data = await res.json();
-    if(data.error){ throw new Error(data.error.message) }
-
-    let jibu = "";
-    for(const part of data.candidates[0].content.parts){
-      if(part.text){ jibu += part.text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g,'<br>') + "<br>"; }
-      if(part.inlineData){
-        jibu += `<img src="data:${part.inlineData.mimeType};base64,${part.inlineData.data}"/>`;
-      }
-    }
-    document.querySelector('.message.ai:last-child').innerHTML = jibu;
-    selectedFile = null;
-  }catch(e){
-    document.querySelector('.message.ai:last-child').innerHTML = "Samahani mkuu, kuna tatizo: " + e.message + " 😅";
-  }
+  const res = await fetch(QURAN_URL);
+  const text = await res.text();
+  localStorage.setItem('quran_sw', text);
+  return text;
 }
-function toBase64(file){return new Promise((r)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(file)})}
+
+function hashKey(key) {
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(key))
+    .then(h => [...new Uint8Array(h)].map(b => b.toString(16).padStart(2,'0')).join(''));
+}
+
+async function login() {
+  const key = document.getElementById('keyInput').value;
+  const hashInput = await hashKey(key);
+  const hashReal = await hashKey(MASTER_KEY);
+  
+  if(hashInput !== hashReal) {
+    document.getElementById('loginError').innerText = "KEY SIO SAHI ❌ UFUMBUZI AMEKATAA";
+    return;
+  }
+  
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('chatScreen').classList.remove('hidden');
+  
+  QURAN_TEXT = await pakuaQurani();
+  SYSTEM_PROMPT = DAMU_YA_UFUMBUZI + "\n\n" + QURAN_TEXT + "\n\n" + `
+  KANUNI: 1.Lugha ya mtu 2.Mtindo wa hekima 3.Mifano pale inahitajika 4.Emoji 0-1 tu soma Kamusi 5.Usisalimie 6.Kusudi: saidia binadamu
+  `;
+  addMsg("ai", "KEY SAHI. UFUMBUZI ANAAMKA... 🙏 Uliza chochote mkuu");
+}
+
+// ===== MAZUNGUMZO =====
+function addMsg(who, text) {
+  const box = document.getElementById('chatBox');
+  box.innerHTML += `<div class="${who}"><b>${who==='ai'?'UFUMBUZI':'WEWE'}:</b> ${text}</div>`;
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendMsg() {
+  const input = document.getElementById('userInput');
+  const msg = input.value.trim();
+  if(!msg) return;
+  addMsg("user", msg);
+  input.value = "";
+  
+  // HAPA UNGANISHA NA API YAKO YA AI - GPT, GEMINI, NK
+  // Kwa sasa tunaiga tu
+  let reply = "Nimepokea: " + msg + ". Nitaangalia Kamusi ya Emoji kwanza 🤔";
+  if(msg.includes("furahi") || msg.includes("pata")) reply = "Hongera sana! Umeistahili 🎉";
+  if(msg.includes("huzuni") || msg.includes("feli")) reply = "Pole sana mkuu 💚 Tutapita pamoja";
+  
+  addMsg("ai", reply);
+}
 </script>
 </body>
 </html>
