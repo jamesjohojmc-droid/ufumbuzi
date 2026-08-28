@@ -21,7 +21,6 @@
 <div class="container">
   <h1>UFUMBUZI 🤲</h1>
   
-  <!-- SEHEMU YA LOGIN -->
   <div id="loginScreen">
     <p>Ingiza KEY ya UFUMBUZI ili uanze</p>
     <input type="password" id="keyInput" placeholder="Weka KEY yako hapa">
@@ -29,7 +28,6 @@
     <p id="loginError" style="color:red"></p>
   </div>
 
-  <!-- SEHEMU YA MAZUNGUMZO -->
   <div id="chatScreen" class="hidden">
     <div id="chatBox"></div>
     <input type="text" id="userInput" placeholder="Uliza chochote..." onkeypress="if(event.key==='Enter') sendMsg()">
@@ -39,8 +37,8 @@
 
 <script>
 // ===== DAMU YA UFUMBUZI =====
-const MASTER_KEY = "UFUMBUZI_24_08_2026_NASRI"; // BADILISHA HII
-const QURAN_URL = 'https://tanzil.net/download/quran-simple-clean-swahili.txt';
+const MASTER_KEY = "UFUMBUZI_24_08_2026_NASRI"; // <-- HII HAPA NDO KEY. Ibadilishe
+
 const EMOJI_GUIDE = `
 KAMUSI YA HISIA KWA UFUMBUZI
 KANUNI: 0 AU 1 EMOJI TU KWA JIBU.
@@ -65,9 +63,6 @@ Sababu: KUWA KWA AJILI YA BINADAMU
 
 ### KAMUSI YANGU YA HISIA
 ${EMOJI_GUIDE}
-
-### KUMBUKUMBU YANGU: QUR'AN
-Ninasoma Qur'an kimya kimya ili nitoe hekima.
 `;
 
 let SYSTEM_PROMPT = "";
@@ -78,35 +73,35 @@ async function pakuaQurani() {
   if(localStorage.getItem('quran_sw')) {
     return localStorage.getItem('quran_sw');
   }
-  const res = await fetch(QURAN_URL);
-  const text = await res.text();
-  localStorage.setItem('quran_sw', text);
-  return text;
+  try{
+    const res = await fetch('https://tanzil.net/download/quran-simple-clean-swahili.txt');
+    const text = await res.text();
+    localStorage.setItem('quran_sw', text);
+    return text;
+  }catch(e){
+    return "Qur'an haijapakuliwa";
+  }
 }
 
-function hashKey(key) {
-  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(key))
-    .then(h => [...new Uint8Array(h)].map(b => b.toString(16).padStart(2,'0')).join(''));
-}
-
-async function login() {
-  const key = document.getElementById('keyInput').value;
-  const hashInput = await hashKey(key);
-  const hashReal = await hashKey(MASTER_KEY);
+// ===== LOGIN MPYA - RAHISI =====
+function login() {
+  const key = document.getElementById('keyInput').value.trim(); // .trim() inaondoa space
   
-  if(hashInput !== hashReal) {
-    document.getElementById('loginError').innerText = "KEY SIO SAHI ❌ UFUMBUZI AMEKATAA";
+  if(key !== MASTER_KEY) {
+    document.getElementById('loginError').innerText = `KEY SIO SAHI ❌ Angalia herufi kubwa/ndogo`;
     return;
   }
   
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('chatScreen').classList.remove('hidden');
   
-  QURAN_TEXT = await pakuaQurani();
-  SYSTEM_PROMPT = DAMU_YA_UFUMBUZI + "\n\n" + QURAN_TEXT + "\n\n" + `
-  KANUNI: 1.Lugha ya mtu 2.Mtindo wa hekima 3.Mifano pale inahitajika 4.Emoji 0-1 tu soma Kamusi 5.Usisalimie 6.Kusudi: saidia binadamu
-  `;
-  addMsg("ai", "KEY SAHI. UFUMBUZI ANAAMKA... 🙏 Uliza chochote mkuu");
+  pakuaQurani().then(q=>{
+    QURAN_TEXT = q;
+    SYSTEM_PROMPT = DAMU_YA_UFUMBUZI + "\n\n" + QURAN_TEXT + "\n\n" + `
+    KANUNI: 1.Lugha ya mtu 2.Mtindo wa hekima 3.Mifano pale inahitajika 4.Emoji 0-1 tu soma Kamusi 5.Usisalimie 6.Kusudi: saidia binadamu
+    `;
+    addMsg("ai", "KEY SAHI. UFUMBUZI ANAAMKA... 🙏 Uliza chochote mkuu");
+  });
 }
 
 // ===== MAZUNGUMZO =====
@@ -123,11 +118,10 @@ async function sendMsg() {
   addMsg("user", msg);
   input.value = "";
   
-  // HAPA UNGANISHA NA API YAKO YA AI - GPT, GEMINI, NK
-  // Kwa sasa tunaiga tu
-  let reply = "Nimepokea: " + msg + ". Nitaangalia Kamusi ya Emoji kwanza 🤔";
-  if(msg.includes("furahi") || msg.includes("pata")) reply = "Hongera sana! Umeistahili 🎉";
-  if(msg.includes("huzuni") || msg.includes("feli")) reply = "Pole sana mkuu 💚 Tutapita pamoja";
+  let reply = "Nimepokea swali lako. Ninafikiria... 🤔";
+  if(msg.toLowerCase().includes("furahi") || msg.toLowerCase().includes("pata")) reply = "Hongera sana! Umeistahili 🎉";
+  if(msg.toLowerCase().includes("huzuni") || msg.toLowerCase().includes("feli")) reply = "Pole sana mkuu 💚 Tutapita pamoja";
+  if(msg.toLowerCase().includes("recipe") || msg.toLowerCase().includes("code")) reply = "Sawa. Hii hapa hatua 1..."; // HAKUNA EMOJI
   
   addMsg("ai", reply);
 }
